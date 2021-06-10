@@ -17,19 +17,24 @@ namespace BaseDatos.Backup
             string rutaArchivoOrigen;
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString))
             {
+                connection.Open();
                 using (SqlCommand command = new SqlCommand(ConfigurationManager.AppSettings["storedProcedure"].ToString(), connection))
                 {
-                    SqlParameter sqlParameter = new SqlParameter("@Valor", SqlDbType.VarChar, -1);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.Add(new SqlParameter("@Fecha", System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss")));
+                    SqlParameter sqlParameter = new SqlParameter("@Ruta", SqlDbType.VarChar, -1);
                     sqlParameter.Direction = ParameterDirection.Output;
+                    command.Parameters.Add(sqlParameter);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        rutaArchivoOrigen = command.Parameters["@Valor"].Value.ToString();
+                        rutaArchivoOrigen = command.Parameters["@Ruta"].Value.ToString();
                     }
                 }
             }
+            rutaArchivoOrigen = rutaArchivoOrigen.Replace("S:", "\\\\SQLCLUSTER");
             string[] array = rutaArchivoOrigen.Split('\\');
-            string rutaArchivoDestino = "C:\\Users\\Administrator\\OneDrive - Universidad Mariano Gálvez\\Backup" + array[array.Length - 2] + array[array.Length - 1];
-            File.Copy(rutaArchivoOrigen,"");
+            string rutaArchivoDestino = "C:/Users/Administrador/OneDrive - Universidad Mariano Gálvez/Backup/" + array[array.Length - 2] + "/" + array[array.Length - 1];
+            File.Copy(rutaArchivoOrigen, rutaArchivoDestino);
         }
     }
 }
