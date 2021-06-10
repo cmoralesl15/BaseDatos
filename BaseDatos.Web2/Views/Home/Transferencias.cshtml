@@ -1,0 +1,32 @@
+﻿@model BaseDatos.Web.Models.Cuentas
+@{
+    ViewBag.Title = "Transferencias";
+}
+<div class="container row">
+    <h2 class="text-center">BanGuasta</h2>
+    <div class="col-4">
+    </div>
+    <div class="col-4">
+        <br />
+        <form method="POST" action="@Url.Action("Transferir", "Home")">
+            <select name="CuentaOrigen" class="form-select" aria-label="Default select example">
+                @foreach (var item in Model.cuentaPropia)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            <br />
+            <select name="CuentaDestino" class="form-select" aria-label="Default select example">
+                @foreach (var item in Model.cuentaAjena)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            <br />
+            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
+        <br />
+    </div>
+    <div class="col-4">
+    </div>
+</div>

@@ -9,21 +9,32 @@
     <div class="col-4">
         <br />
         <form method="POST" action="@Url.Action("Transferir", "Home")">
-            <select name="CuentaOrigen" class="form-select" aria-label="Default select example">
-                @foreach (var item in Model.cuentaPropia)
-                {
-                    <option value="@item">@item</option>
-                }
-            </select>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Cuenta Origen</label>
+                <select name="CuentaOrigen" class="form-select" aria-label="Default select example">
+                    @foreach (var item in Model.cuentaPropia)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
             <br />
-            <select name="CuentaDestino" class="form-select" aria-label="Default select example">
-                @foreach (var item in Model.cuentaAjena)
-                {
-                    <option value="@item">@item</option>
-                }
-            </select>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Cuenta Destino</label>
+                <select name="CuentaDestino" class="form-select" aria-label="Default select example">
+                    @foreach (var item in Model.cuentaAjena)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
             <br />
-            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Monto</label>
+                <input name="Monto" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary">Transferir</button>
         </form>
         <br />
     </div>

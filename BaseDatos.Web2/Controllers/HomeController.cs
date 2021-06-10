@@ -1,4 +1,4 @@
-﻿using BaseDatos.Web.Models;
+﻿using BaseDatos.Web2.Models;
 using System;
 using System.Configuration;
 using System.Data;
@@ -23,7 +23,7 @@ namespace BaseDatos.Web.Controllers
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ToString()))
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("SpIniciarSesion", connection))
+                    using (SqlCommand command = new SqlCommand("SpIniciarSesion"))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@Usuario", usuario));
@@ -33,9 +33,9 @@ namespace BaseDatos.Web.Controllers
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Session["Mensaje"] = e.ToString();
+                Session["Mensaje"] = "Ha ocurrido un error, intente nuevamente.";
                 return RedirectToAction("Index");
             }
             return RedirectToAction("Transferencias");
@@ -51,7 +51,7 @@ namespace BaseDatos.Web.Controllers
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ToString()))
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("SpCuentasPropias", connection))
+                    using (SqlCommand command = new SqlCommand("SpCuentasPropias"))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@Usuario", usuario));
@@ -59,7 +59,7 @@ namespace BaseDatos.Web.Controllers
                         {
                             while (reader.Read())
                             {
-                                cuentas.cuentaPropia.Add(reader["Id_Cuenta"].ToString());
+                                cuentas.cuentaAjena.Add(reader["Cuenta"].ToString());
                             } 
                         }
                     }
@@ -68,7 +68,7 @@ namespace BaseDatos.Web.Controllers
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ToString()))
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("SpCuentasAjenas", connection))
+                    using (SqlCommand command = new SqlCommand("SpCuentasAjenas"))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@Usuario", usuario));
@@ -76,15 +76,15 @@ namespace BaseDatos.Web.Controllers
                         {
                             while (reader.Read())
                             {
-                                cuentas.cuentaAjena.Add(reader["Id_Cuenta"].ToString());
+                                cuentas.cuentaAjena.Add(reader["Cuenta"].ToString());
                             }
                         }
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Session["Mensaje"] = e.ToString();
+                Session["Mensaje"] = "Ha ocurrido un error, intente nuevamente.";
                 return RedirectToAction("Index");
             }
             return View(cuentas);
@@ -100,21 +100,20 @@ namespace BaseDatos.Web.Controllers
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ToString()))
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("SpTransferir", connection))
+                    using (SqlCommand command = new SqlCommand("SpCuentasAjenas"))
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@CuentaOrigen", cuentaOrigen));
                         command.Parameters.Add(new SqlParameter("@CuentaDestino", cuentaDestino));
-                        command.Parameters.Add(new SqlParameter("@Monto", monto));
-                        command.Parameters.Add(new SqlParameter("@MsgReturn", ""));
+                        command.Parameters.Add(new SqlParameter("@CuentaDestino", cuentaDestino));
                         command.ExecuteReader();
-                        System.IO.File.AppendAllText(ConfigurationManager.AppSettings["monitor"], "\n" + $@"{Session["Usuario"]} | Transferencia de Q{monto} desde {cuentaOrigen} hacia {cuentaDestino}");
+                        System.IO.File.AppendAllText(ConfigurationManager.AppSettings["monitor"],$@"{Session["Usuario"]} | Transferencia de Q{monto} desde {cuentaOrigen} hacia {cuentaDestino}");
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Session["Mensaje"] = e.ToString();
+                Session["Mensaje"] = "Ha ocurrido un error, intente nuevamente.";
             }
             return RedirectToAction("Transferencias");
         }
