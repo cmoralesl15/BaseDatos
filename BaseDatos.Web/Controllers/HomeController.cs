@@ -1,13 +1,9 @@
 ﻿using BaseDatos.Web.Models;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
 
 namespace BaseDatos.Web.Controllers
 {
@@ -63,7 +59,7 @@ namespace BaseDatos.Web.Controllers
                         {
                             while (reader.Read())
                             {
-                                cuentas.cuentaAjenas.Add(reader["Cuenta"].ToString());
+                                cuentas.cuentaAjena.Add(reader["Cuenta"].ToString());
                             } 
                         }
                     }
@@ -80,7 +76,7 @@ namespace BaseDatos.Web.Controllers
                         {
                             while (reader.Read())
                             {
-                                cuentas.cuentaAjenas.Add(reader["Cuenta"].ToString());
+                                cuentas.cuentaAjena.Add(reader["Cuenta"].ToString());
                             }
                         }
                     }
@@ -99,6 +95,7 @@ namespace BaseDatos.Web.Controllers
             {
                 string cuentaOrigen = form["CuentaOrigen"];
                 string cuentaDestino = form["CuentaDestino"];
+                string monto = form["Monto"];
 
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ToString()))
                 {
@@ -108,8 +105,9 @@ namespace BaseDatos.Web.Controllers
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@CuentaOrigen", cuentaOrigen));
                         command.Parameters.Add(new SqlParameter("@CuentaDestino", cuentaDestino));
+                        command.Parameters.Add(new SqlParameter("@CuentaDestino", cuentaDestino));
                         command.ExecuteReader();
-                        Response.Write("<script>alert('Transferencia exitosa.')</script>");
+                        System.IO.File.AppendAllText(ConfigurationManager.AppSettings["monitor"],$@"{Session["Usuario"]} | Transferencia de Q{monto} desde {cuentaOrigen} hacia {cuentaDestino}");
                     }
                 }
             }

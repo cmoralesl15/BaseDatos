@@ -4,46 +4,29 @@
 }
 <div class="container row">
     <h2 class="text-center">BanGuasta</h2>
-    <div class="col-2">
+    <div class="col-4">
     </div>
-    <div class="col-3">
+    <div class="col-4">
         <br />
-        <form method="POST" action="@Url.Action("Validar", "Home")">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Usuario</label>
-                <input name="Usuario" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Ingrese su usuario">
-            </div>
+        <form method="POST" action="@Url.Action("Transferir", "Home")">
+            <select name="CuentaOrigen" class="form-select" aria-label="Default select example">
+                @foreach (var item in Model.cuentaPropia)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
             <br />
-            <div class="form-group">
-                <label for="exampleInputPassword1">Contraseña</label>
-                <input name="Contrasena" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contraseña">
-            </div>
+            <select name="CuentaDestino" class="form-select" aria-label="Default select example">
+                @foreach (var item in Model.cuentaAjena)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
             <br />
             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-            <br />
         </form>
         <br />
     </div>
-    <div class="col-2">
-    </div>
-    <div class="col-3">
-        <br />
-        <form method="POST" action="@Url.Action("Validar", "Home")">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Usuario</label>
-                <input name="Usuario" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Ingrese su usuario">
-            </div>
-            <br />
-            <div class="form-group">
-                <label for="exampleInputPassword1">Contraseña</label>
-                <input name="Contrasena" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contraseña">
-            </div>
-            <br />
-            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-            <br />
-        </form>
-        <br />
-    </div>
-    <div class="col-2">
+    <div class="col-4">
     </div>
 </div>
