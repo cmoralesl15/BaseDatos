@@ -4,12 +4,12 @@ namespace BaseDatos.Web.Models
 {
     public class Cuentas
     {
-        public List<string> cuentaPropia { get; set; }
+        public Dictionary<string, string> cuentaPropia { get; set; }
         public List<string> cuentaAjena { get; set; }
 
         public Cuentas()
         {
-            cuentaPropia = new List<string>();
+            cuentaPropia = new Dictionary<string, string>();
             cuentaAjena = new List<string>();
         }
 

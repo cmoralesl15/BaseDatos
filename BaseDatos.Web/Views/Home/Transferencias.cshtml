@@ -4,24 +4,32 @@
 }
 <div class="container row">
     <h2 class="text-center">BanGuasta</h2>
+    <br />
+    <br />
+    <br />
+    <h4 class="text-center">Bienvenido @Session["Nombre"] @Session["Apellido"]</h4>
+    <br />
     <div class="col-4">
     </div>
-    <div class="col-4">
+    <div class="col-8">
+        <br />
+        <label class="text-secondary">Complete los siguientes campos para hacer una transferencia.</label>
+        <br />
         <br />
         <form method="POST" action="@Url.Action("Transferir", "Home")">
             <div class="form-group">
-                <label for="exampleInputEmail1">Cuenta Origen</label>
-                <select name="CuentaOrigen" class="form-select" aria-label="Default select example">
+                <label for="CuentaOrigen">Cuentas propias</label>
+                <select name="CuentaOrigen" class="form-select">
                     @foreach (var item in Model.cuentaPropia)
                     {
-                        <option value="@item">@item</option>
+                        <option value="@item">@item.Key @item.Value</option>
                     }
                 </select>
             </div>
             <br />
             <div class="form-group">
-                <label for="exampleInputEmail1">Cuenta Destino</label>
-                <select name="CuentaDestino" class="form-select" aria-label="Default select example">
+                <label for="CuentaDestino">Cuentas de terceros</label>
+                <select name="CuentaDestino" class="form-select">
                     @foreach (var item in Model.cuentaAjena)
                     {
                         <option value="@item">@item</option>
@@ -30,14 +38,16 @@
             </div>
             <br />
             <div class="form-group">
-                <label for="exampleInputEmail1">Monto</label>
-                <input name="Monto" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <label for="Monto">Monto</label>
+                <input name="Monto" type="text" class="form-control">
             </div>
             <br />
             <button type="submit" class="btn btn-primary">Transferir</button>
+            <br />
+            <br />
+            <label class="text-danger">@Session["MensajeError"]</label>
+            <label class="text-success">@Session["Mensaje"]</label>
         </form>
         <br />
-    </div>
-    <div class="col-4">
     </div>
 </div>

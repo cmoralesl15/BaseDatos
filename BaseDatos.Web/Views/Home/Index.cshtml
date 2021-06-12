@@ -6,25 +6,25 @@
     <h2 class="text-center">BanGuasta</h2>
     <div class="col-4">
     </div>
-    <div class="col-4">
+    <div class="col-8">
         <br />
         <form method="POST" action="@Url.Action("Validar", "Home")">
             <div class="form-group">
-                <label for="exampleInputEmail1">Usuario</label>
-                <input name="Usuario" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Ingrese su usuario">
+                <label for="Usuario">Usuario</label>
+                <input name="Usuario" type="text" class="form-control" placeholder="Ingrese su usuario">
             </div>
             <br />
             <div class="form-group">
-                <label for="exampleInputPassword1">Contraseña</label>
+                <label for="Contrasena">Contraseña</label>
                 <input name="Contrasena" type="password" class="form-control" id="exampleInputPassword1" placeholder="Contraseña">
             </div>
             <br />
             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
             <br />
             <br />
+            <label class="text-danger">@Session["MensajeError"]</label>
+            <br />
         </form>
         <br />
-    </div>
-    <div class="col-4">
     </div>
 </div>

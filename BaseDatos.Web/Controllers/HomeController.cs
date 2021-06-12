@@ -11,6 +11,7 @@ namespace BaseDatos.Web.Controllers
     {
         public ActionResult Index()
         {
+            Session["PagOrigen"] = "Index";
             return View();
         }
 
@@ -18,7 +19,7 @@ namespace BaseDatos.Web.Controllers
         {
             try
             {
-                string usuario = form["Usuario"];
+                string usuario = form["Usuario"].ToLower();
                 string contrasena = form["Contrasena"];
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ToString()))
                 {
@@ -28,16 +29,26 @@ namespace BaseDatos.Web.Controllers
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@Usuario", usuario));
                         command.Parameters.Add(new SqlParameter("@contrasena", contrasena));
-                        command.ExecuteReader();
-                        Session["Usuario"] = usuario;
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Session["Id_Cliente"] = reader["Id_Cliente"];
+                                Session["Nombre"] = reader["Nombre"];
+                                Session["Apellido"] = reader["Apellido"];
+                            }
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
-                Session["Mensaje"] = e.ToString();
+                Session["Mensaje"] = "";
+                Session["MensajeError"] = e.Message;
                 return RedirectToAction("Index");
             }
+            Session["Mensaje"] = "";
+            Session["MensajeError"] = "";
             return RedirectToAction("Transferencias");
         }
 
@@ -47,19 +58,19 @@ namespace BaseDatos.Web.Controllers
             try
             {
                 //Cuentas Propias
-                string usuario = Session["Usuario"].ToString();
+                string idCliente = Session["Id_Cliente"].ToString();
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ToString()))
                 {
                     connection.Open();
                     using (SqlCommand command = new SqlCommand("SpCuentasPropias", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("@Usuario", usuario));
+                        command.Parameters.Add(new SqlParameter("@Id_Cliente", idCliente));
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                cuentas.cuentaPropia.Add(reader["Id_Cuenta"].ToString());
+                                cuentas.cuentaPropia.Add(reader["Id_Cuenta"].ToString(), "Q" + reader["Saldo"].ToString());
                             } 
                         }
                     }
@@ -71,7 +82,7 @@ namespace BaseDatos.Web.Controllers
                     using (SqlCommand command = new SqlCommand("SpCuentasAjenas", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("@Usuario", usuario));
+                        command.Parameters.Add(new SqlParameter("@Id_Cliente", idCliente));
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
@@ -84,9 +95,18 @@ namespace BaseDatos.Web.Controllers
             }
             catch (Exception e)
             {
-                Session["Mensaje"] = e.ToString();
+                Session["Mensaje"] = "";
+                Session["MensajeError"] = e.Message;
                 return RedirectToAction("Index");
             }
+
+            if (Session["PagOrigen"].Equals("Index"))
+            {
+                Session["Mensaje"] = "";
+                Session["MensajeError"] = "";
+                Session["PagOrigen"] = "Transferencias";
+            }
+
             return View(cuentas);
         }
         public ActionResult Transferir(FormCollection form)
@@ -106,15 +126,25 @@ namespace BaseDatos.Web.Controllers
                         command.Parameters.Add(new SqlParameter("@CuentaOrigen", cuentaOrigen));
                         command.Parameters.Add(new SqlParameter("@CuentaDestino", cuentaDestino));
                         command.Parameters.Add(new SqlParameter("@Monto", monto));
-                        command.Parameters.Add(new SqlParameter("@MsgReturn", ""));
                         command.ExecuteReader();
-                        System.IO.File.AppendAllText(ConfigurationManager.AppSettings["monitor"], "\n" + $@"{Session["Usuario"]} | Transferencia de Q{monto} desde {cuentaOrigen} hacia {cuentaDestino}");
+                        Session["Mensaje"] = $@"Ha transferido Q{Double.Parse(monto)} desde la cuenta: {cuentaOrigen} hacia la cuenta: {cuentaDestino}";
+                        Session["MensajeError"] = "";
+                        Session["PagOrigen"] = "Transferencias";
+                        try
+                        {
+                            System.IO.File.AppendAllText(ConfigurationManager.AppSettings["monitor"], $@"{Session["Nombre"]} {Session["Apellido"]} ha transferido Q{Double.Parse(monto)} desde la cuenta: {cuentaOrigen} hacia la cuenta: {cuentaDestino}" + "\n");
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
-                Session["Mensaje"] = e.ToString();
+                Session["Mensaje"] = "";
+                Session["MensajeError"] = e.Message;
+                Session["PagOrigen"] = "Transferencias";
             }
             return RedirectToAction("Transferencias");
         }

@@ -1,6 +1,7 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background: radial-gradient(circle at 50% -20.71%, #faffff 0, #d8f0fa 25%, #b5def2 50%, #92cbeb 75%, #72b9e5 100%);
 }
 
 /* Set padding to keep content from hitting the edges */
